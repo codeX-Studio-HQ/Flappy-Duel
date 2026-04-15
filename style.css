@@ -1,0 +1,688 @@
+/* ── Reset & Base ────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+    --bg:      #080404;
+    --surface: #100808;
+    --border:  rgba(180,20,20,0.18);
+    --accent:  #cc2222;
+    --accent2: #8b0000;
+    --red:     #ff4444;
+    --green:   #3ddc84;
+    --text:    #f0e0e0;
+    --muted:   rgba(240,200,200,0.4);
+    --radius:  18px;
+    --glow:    0 0 32px rgba(160,0,0,0.2);
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-x: hidden;
+    padding: 24px 12px 40px;
+}
+
+/* ── Arka Plan Partiküller ───────────────────────── */
+.bg-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.bg-particles span {
+    position: absolute;
+    display: block;
+    border-radius: 50%;
+    opacity: 0;
+    animation: float-up linear infinite;
+}
+
+.bg-particles span:nth-child(1)  { width:3px;  height:3px;  background:var(--accent);  left:12%;  animation-duration:9s;  animation-delay:0s;   }
+.bg-particles span:nth-child(2)  { width:2px;  height:2px;  background:#ff2222;        left:28%;  animation-duration:12s; animation-delay:2s;   }
+.bg-particles span:nth-child(3)  { width:4px;  height:4px;  background:var(--accent);  left:44%;  animation-duration:8s;  animation-delay:1s;   }
+.bg-particles span:nth-child(4)  { width:2px;  height:2px;  background:#fff;           left:60%;  animation-duration:14s; animation-delay:3s;   }
+.bg-particles span:nth-child(5)  { width:3px;  height:3px;  background:#8b0000;        left:75%;  animation-duration:10s; animation-delay:0.5s; }
+.bg-particles span:nth-child(6)  { width:2px;  height:2px;  background:var(--accent);  left:88%;  animation-duration:11s; animation-delay:4s;   }
+.bg-particles span:nth-child(7)  { width:3px;  height:3px;  background:#ff2222;        left:5%;   animation-duration:13s; animation-delay:2.5s; }
+.bg-particles span:nth-child(8)  { width:2px;  height:2px;  background:var(--accent);  left:55%;  animation-duration:7s;  animation-delay:1.5s; }
+
+@keyframes float-up {
+    0%   { bottom:-10px; opacity:0; transform:translateX(0); }
+    10%  { opacity:0.5; }
+    90%  { opacity:0.25; }
+    100% { bottom:105vh; opacity:0; transform:translateX(20px); }
+}
+
+/* ── Layout ──────────────────────────────────────── */
+.container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 860px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ── Logo ────────────────────────────────────────── */
+.logo-wrap {
+    margin-bottom: 20px;
+    animation: logo-in 0.7s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+.logo {
+    width: clamp(160px, 40vw, 260px);
+    height: auto;
+    filter: drop-shadow(0 0 24px rgba(200,0,0,0.5));
+}
+
+@keyframes logo-in {
+    from { opacity:0; transform:translateY(-20px) scale(0.9); }
+    to   { opacity:1; transform:translateY(0)     scale(1);   }
+}
+
+/* ── Card ────────────────────────────────────────── */
+.card {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    box-shadow: var(--glow), 0 8px 40px rgba(0,0,0,0.7);
+    animation: card-in 0.45s cubic-bezier(.25,.8,.25,1) both;
+}
+
+@keyframes card-in {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:translateY(0);    }
+}
+
+/* ── Butonlar ────────────────────────────────────── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 28px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.07);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: inherit;
+}
+.btn:hover::after  { opacity: 1; }
+.btn:active::after { opacity: 0; }
+
+.btn:hover  { transform: translateY(-2px); }
+.btn:active { transform: translateY(1px);  }
+
+.btn-primary {
+    background: linear-gradient(135deg, #cc2222, #7a0000);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(160,0,0,0.45);
+}
+.btn-primary:hover { box-shadow: 0 6px 28px rgba(200,0,0,0.65); }
+
+.btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: rgba(200,40,40,0.45); }
+
+.btn-icon { font-size: 0.9em; }
+
+/* ── Menü ────────────────────────────────────────── */
+#menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.divider {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+.divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.join-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+input {
+    padding: 13px 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 6px;
+    width: 170px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    background: rgba(180,0,0,0.06);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(180,0,0,0.18);
+}
+input::placeholder {
+    color: var(--muted);
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.hint {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+/* ── Bekleme ─────────────────────────────────────── */
+#waiting {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+}
+
+.label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+.room-code {
+    font-size: clamp(2rem, 7vw, 3.2rem);
+    font-weight: 900;
+    letter-spacing: 10px;
+    color: var(--text);
+    background: rgba(140,0,0,0.12);
+    border: 1px solid rgba(180,20,20,0.35);
+    border-radius: 14px;
+    padding: 10px 28px;
+    text-shadow: 0 0 20px rgba(200,0,0,0.6);
+    animation: flicker 3s ease-in-out infinite;
+}
+
+@keyframes flicker {
+    0%,100% { text-shadow: 0 0 20px rgba(200,0,0,0.5); }
+    50%      { text-shadow: 0 0 36px rgba(255,0,0,0.9), 0 0 8px rgba(180,0,0,0.5); }
+}
+
+.pulse-ring {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    position: relative;
+}
+.pulse-ring::before, .pulse-ring::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    animation: ring-out 1.8s ease-out infinite;
+}
+.pulse-ring::after { animation-delay: 0.9s; }
+
+@keyframes ring-out {
+    0%   { transform:scale(1);   opacity:0.8; }
+    100% { transform:scale(3.5); opacity:0;   }
+}
+
+.status-text {
+    font-size: 1rem;
+    color: var(--muted);
+    min-height: 1.4em;
+}
+
+/* ── HUD ─────────────────────────────────────────── */
+.hud {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.hud-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(140,0,0,0.12);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 8px 22px;
+    transition: box-shadow 0.3s;
+}
+
+.hud-box.you { box-shadow: 0 0 16px rgba(200,0,0,0.2); }
+.hud-box.opp { box-shadow: 0 0 16px rgba(255,80,80,0.15); }
+
+.hud-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+}
+
+.hud-score {
+    font-size: 1.6rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.hud-box.you .hud-score { color: #ff4444; }
+.hud-box.opp .hud-score { color: #ff8888; }
+
+.score-bump { animation: bump 0.25s ease-out; }
+@keyframes bump {
+    0%   { transform:scale(1);   }
+    50%  { transform:scale(1.4); }
+    100% { transform:scale(1);   }
+}
+
+/* ── Canvas ──────────────────────────────────────── */
+.canvas-wrap {
+    position: relative;
+    line-height: 0;
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(160,20,20,0.3);
+    box-shadow: 0 0 40px rgba(140,0,0,0.2);
+}
+
+/* ── Geri Sayım ──────────────────────────────────── */
+.countdown {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(4rem, 15vw, 8rem);
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 40px rgba(220,0,0,0.9);
+    pointer-events: none;
+    animation: cd-pulse 0.9s ease-in-out infinite alternate;
+    background: rgba(8,4,4,0.6);
+    border-radius: 12px;
+}
+
+@keyframes cd-pulse {
+    from { opacity:0.7; transform:scale(0.92); }
+    to   { opacity:1;   transform:scale(1.06); }
+}
+
+/* ── Oyun Sonu ───────────────────────────────────── */
+#gameOver {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.result-icon {
+    font-size: 4rem;
+    animation: icon-in 0.5s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+@keyframes icon-in {
+    from { transform:scale(0) rotate(-20deg); opacity:0; }
+    to   { transform:scale(1) rotate(0deg);   opacity:1; }
+}
+
+.result-text {
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-align: center;
+}
+
+.go-btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+/* ── Maç Sonu Detay ──────────────────────────────── */
+.match-stats {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+.stat-box {
+    background: rgba(140,0,0,0.15);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 16px;
+    min-width: 120px;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 0.92rem;
+}
+
+.stat-you { color: #888888; font-weight: 700; }
+.stat-opp { color: #cc2222; font-weight: 700; }
+
+/* ── About FAB ───────────────────────────────────── */
+.about-fab {
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #1a0a0a;
+    color: #cc2222;
+    border: 2px solid rgba(180,20,20,0.35);
+    font-size: 1.4rem;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+    transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0;
+    padding: 0;
+}
+.about-fab:hover {
+    transform: scale(1.1);
+    border-color: #cc2222;
+    box-shadow: 0 6px 24px rgba(180,0,0,0.4);
+}
+.about-fab:active { transform: scale(0.95); }
+
+/* ── Modal Overlay ───────────────────────────────── */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.72);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    opacity: 1;
+    transition: opacity 0.28s ease;
+}
+
+.modal.closing {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal.hidden {
+    display: none !important;
+}
+
+/* ── Modal Kutusu ────────────────────────────────── */
+.modal-box {
+    width: 90%;
+    max-width: 420px;
+    background: #0f0d0d;
+    border: 1px solid rgba(180,20,20,0.22);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    transition: transform 0.32s cubic-bezier(.17,.67,.24,1.2), opacity 0.28s ease;
+}
+
+.modal.opening .modal-box {
+    animation: mSlideUp 0.35s cubic-bezier(.17,.67,.24,1.2) both;
+}
+
+.modal.closing .modal-box {
+    transform: translateY(30px) scale(0.97);
+    opacity: 0;
+}
+
+@keyframes mSlideUp {
+    from { transform:translateY(30px) scale(0.97); opacity:0; }
+    to   { transform:translateY(0)    scale(1);    opacity:1; }
+}
+
+/* ── Modal Başlık Bar ────────────────────────────── */
+.modal-title-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+}
+
+.modal-icon {
+    width: 28px;
+    height: 28px;
+    background: rgba(180,20,20,0.18);
+    border: 1px solid rgba(180,20,20,0.35);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cc2222;
+    font-weight: 900;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.modal-title {
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    color: #cc2222;
+    flex: 1;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    padding: 0;
+}
+.modal-close:hover {
+    background: rgba(180,20,20,0.2);
+    color: #fff;
+    border-color: rgba(180,20,20,0.4);
+}
+
+/* ── Modal Divider ───────────────────────────────── */
+.modal-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin: 0;
+}
+
+/* ── Modal Hero ──────────────────────────────────── */
+.modal-hero {
+    padding: 28px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+}
+
+.modal-logo {
+    width: 160px;
+    height: auto;
+    filter: drop-shadow(0 0 18px rgba(200,0,0,0.4));
+}
+
+.modal-version-badge {
+    display: inline-block;
+    background: rgba(180,20,20,0.15);
+    border: 1px solid rgba(180,20,20,0.35);
+    color: #cc2222;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    padding: 4px 14px;
+    border-radius: 30px;
+    text-transform: uppercase;
+}
+
+/* ── Modal Açıklama ──────────────────────────────── */
+.modal-desc {
+    padding: 18px 24px;
+    text-align: center;
+    color: rgba(240,220,220,0.5);
+    font-size: 0.88rem;
+    line-height: 1.65;
+}
+
+/* ── Modal Bilgi Satırları ───────────────────────── */
+.modal-rows {
+    padding: 0 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 12px 16px;
+}
+
+.modal-row-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.35);
+}
+
+.modal-row-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(240,220,220,0.85);
+}
+
+.modal-row-value.discord { color: #7289da; }
+
+/* ── Modal Footer ────────────────────────────────── */
+.modal-footer {
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.28);
+    text-transform: uppercase;
+}
+
+.heart {
+    color: #cc2222;
+    font-size: 1rem;
+}
+
+.modal-company-logo {
+    height: 22px;
+    width: auto;
+    filter: brightness(0.75);
+}
+
+/* ── Utility ─────────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* ── Mobil ───────────────────────────────────────── */
+@media (max-width: 600px) {
+    body { padding: 14px 8px 30px; }
+    .card { padding: 22px 14px; }
+    .hud { gap: 10px; }
+    .hud-box { padding: 7px 14px; }
+    .hud-score { font-size: 1.3rem; }
+    .btn { padding: 12px 20px; font-size: 0.9rem; }
+    input { width: 145px; font-size: 1rem; }
+    .go-btns { flex-direction: column; width: 100%; }
+    .go-btns .btn { width: 100%; justify-content: center; }
+    .about-fab { bottom: 14px; right: 14px; width: 42px; height: 42px; font-size: 1.2rem; }
+    .modal-box { width: 95%; }
+    .modal-logo { width: 130px; }
+}

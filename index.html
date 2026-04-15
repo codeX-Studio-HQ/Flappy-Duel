@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🦅 Flappy Duel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Arka plan partikülleri -->
+    <div class="bg-particles">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="container">
+
+        <!-- Logo -->
+        <div class="logo-wrap">
+            <img src="art/Flappy Duel.png" alt="Flappy Duel" class="logo">
+        </div>
+
+        <!-- Ana Menü -->
+        <div id="menu" class="card">
+            <button id="createBtn" class="btn btn-primary">
+                <span class="btn-icon">✦</span> Oda Oluştur
+            </button>
+            <div class="divider"><span>veya</span></div>
+            <div class="join-row">
+                <input id="joinInput" type="text" placeholder="KOD GİR" maxlength="6" autocomplete="off">
+                <button id="joinBtn" class="btn btn-outline">Katıl</button>
+            </div>
+            <p class="hint">Boşluk tuşu veya ekrana dokun</p>
+        </div>
+
+        <!-- Bekleme -->
+        <div id="waiting" class="card hidden">
+            <p class="label">ODA KODU</p>
+            <div id="roomCodeDisplay" class="room-code">------</div>
+            <div class="pulse-ring"></div>
+            <p id="statusText" class="status-text">Rakip bekleniyor...</p>
+            <button id="startBtn" class="btn btn-primary hidden">▶ BAŞLAT</button>
+        </div>
+
+        <!-- Oyun -->
+        <div id="game" class="card hidden">
+            <div class="hud">
+                <div class="hud-box you">
+                    <span class="hud-label">SEN</span>
+                    <span id="myScore" class="hud-score">0</span>
+                </div>
+                <div class="hud-box opp">
+                    <span class="hud-label">RAKİP</span>
+                    <span id="opponentScore" class="hud-score">0</span>
+                </div>
+            </div>
+            <div class="canvas-wrap">
+                <canvas id="gameCanvas" width="800" height="440"></canvas>
+                <div id="countdownDisplay" class="countdown hidden">3</div>
+            </div>
+        </div>
+
+        <!-- Oyun Sonu -->
+        <div id="gameOver" class="card hidden">
+    <div id="resultIcon" class="result-icon">🏆</div>
+    <h2 id="resultText" class="result-text">OYUN BİTTİ</h2>
+
+    <!-- Maç sonu istatistik -->
+    <div class="match-stats">
+        <div class="stat-box">
+            <span class="stat-label">🏁 Boru</span>
+            <div class="stat-row">
+                <span class="stat-you" id="statMyPipes">0</span>
+                <span style="color:var(--muted)">vs</span>
+                <span class="stat-opp" id="statOppPipes">0</span>
+            </div>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">🪶 Zıplama</span>
+            <div class="stat-row">
+                <span class="stat-you" id="statMyFlaps">0</span>
+                <span style="color:var(--muted)">vs</span>
+                <span class="stat-opp" id="statOppFlaps">0</span>
+            </div>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">⏱️ Süre</span>
+            <div class="stat-row">
+                <span class="stat-you" id="statMyTime">0s</span>
+                <span style="color:var(--muted)">vs</span>
+                <span class="stat-opp" id="statOppTime">0s</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="go-btns">
+        <button id="restartBtn" class="btn btn-primary">Tekrar Oyna</button>
+        <button id="menuBtn" class="btn btn-outline">Ana Menü</button>
+    </div>
+</div>
+
+<!-- Hakkında Modal -->
+<div id="aboutModal" class="modal hidden">
+    <div class="modal-box">
+
+        <!-- Başlık -->
+        <div class="modal-title-bar">
+            <span class="modal-icon">?</span>
+            <span class="modal-title">ABOUT</span>
+            <button class="modal-close" id="modalClose">✕</button>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <!-- Logo + versiyon -->
+        <div class="modal-hero">
+            <img src="art/Flappy Duel.png" alt="Flappy Duel" class="modal-logo">
+            <div class="modal-version-badge">v1.0</div>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <!-- Açıklama -->
+        <p class="modal-desc">
+            İki oyuncu, aynı borular, aynı anda mücadele!<br>
+            Boruları geç, rakibinden daha çok skor yap.
+        </p>
+
+        <!-- Bilgi satırları -->
+        <div class="modal-rows">
+            <div class="modal-row">
+                <span class="modal-row-label">DEVELOPER</span>
+                <span class="modal-row-value">Wrenchiz</span>
+            </div>
+            <div class="modal-row">
+                <span class="modal-row-label">DISCORD</span>
+                <span class="modal-row-value discord">88wrench_iz</span>
+            </div>
+            <div class="modal-row">
+                <span class="modal-row-label">VERSION</span>
+                <span class="modal-row-value">v1.0</span>
+            </div>
+            <div class="modal-row">
+                <span class="modal-row-label">ENGINE</span>
+                <span class="modal-row-value">HTML5 Canvas + Socket.io</span>
+            </div>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+            MADE WITH <span class="heart">❤</span> BY
+            <img src="art/codeX_Transparan.png" alt="Şirket" class="modal-company-logo">
+        </div>
+
+    </div>
+</div>
+
+<!-- Hakkında Butonu -->
+<button id="aboutBtn" class="about-fab">?</button>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hakkında Butonu -->
+<button id="aboutBtn" class="about-btn">?</button>
+
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
