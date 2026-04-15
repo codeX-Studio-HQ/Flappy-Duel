@@ -5,7 +5,7 @@ Made With ❤️ by **codeX** Studio
 > **Discord:** 88wrench_iz  
 > **Version:** Beta v1.0  
 > **Engine:** HTML5 Canvas + Socket.io  
-> **Live Open Beta:** [https://flappy-duel-production.up.railway.app/](https://flappy-duel-production.up.railway.app/)
+> **Live Open Beta:** [https://flappy-duel.up.railway.app](https://flappy-duel.up.railway.app)
 
 ---
 
