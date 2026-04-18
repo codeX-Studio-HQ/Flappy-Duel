@@ -21,6 +21,12 @@ function generatePipeSet(n = 20) {
 io.on('connection', socket => {
     console.log(`✅ Bağlandı: ${socket.id}`);
 
+    // ---------- PİNG PONG (YENİ) ----------
+    socket.on('ping', () => {
+        socket.emit('pong');
+    });
+    // -------------------------------------
+
     /* ── Oda Oluştur ── */
     socket.on('createRoom', () => {
         const code = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -57,16 +63,30 @@ io.on('connection', socket => {
         if (room.players.length !== 2)        return;
         if (room.gameStarted)                 return;
 
-        room.gameOver = false;
-        room.players.forEach(p => { p.ready = false; p.score = 0; p.alive = true; });
+        room.gameOver  = false;
+        room.startedAt = Date.now() + 3000; // geri sayım dahil
+        room.players.forEach(p => {
+            p.score  = 0;
+            p.alive  = true;
+            p.flaps  = 0;
+            p.diedAt = null;
+            p.ready  = false;
+        });
         room.pipeSet = generatePipeSet();
 
         io.to(code).emit('countdown', { seconds: 3, pipeSet: room.pipeSet });
         setTimeout(() => { if (rooms[code]) rooms[code].gameStarted = true; }, 3000);
     });
 
-    /* ── Kanat ── */
-    socket.on('flap', code => socket.to(code).emit('opponentFlapped'));
+    /* ── Kanat ve Flap Sayacı ── */
+    socket.on('flap', code => {
+        const room = rooms[code];
+        if (room) {
+            const p = room.players.find(p => p.id === socket.id);
+            if (p) p.flaps = (p.flaps || 0) + 1;
+        }
+        socket.to(code).emit('opponentFlapped');
+    });
 
     /* ── Skor ── */
     socket.on('scoreUpdate', code => {
@@ -81,78 +101,44 @@ io.on('connection', socket => {
 
     /* ── Oyun Bitti ── */
     socket.on('gameOver', code => {
-    const room = rooms[code];
-    if (!room) return;
+        const room = rooms[code];
+        if (!room) return;
 
-    const player = room.players.find(p => p.id === socket.id);
-    if (!player) return;
+        const player = room.players.find(p => p.id === socket.id);
+        if (!player) return;
 
-    player.alive      = false;
-    player.diedAt     = Date.now();
-    player.flaps      = player.flaps || 0;
+        player.alive  = false;
+        player.diedAt = Date.now();
 
-    socket.to(code).emit('opponentDied');
+        socket.to(code).emit('opponentDied');
 
-    const alive = room.players.filter(p => p.alive).length;
-    if (alive === 0 || (room.players.length === 2 && alive <= 1)) {
-        const [p1, p2] = room.players;
-        let winner = 'draw';
-        if (p1 && p2) {
-            if      (p1.score > p2.score) winner = p1.id;
-            else if (p2.score > p1.score) winner = p2.id;
-        }
-        room.gameStarted = false;
-        room.gameOver    = true;
+        const alive = room.players.filter(p => p.alive).length;
+        if (alive === 0 || (room.players.length === 2 && alive <= 1)) {
+            const [p1, p2] = room.players;
+            let winner = 'draw';
+            if (p1 && p2) {
+                if      (p1.score > p2.score) winner = p1.id;
+                else if (p2.score > p1.score) winner = p2.id;
+            }
+            room.gameStarted = false;
+            room.gameOver    = true;
 
-        /* Her oyuncuya rakibin istatistiklerini gönder */
-        setTimeout(() => {
-            room.players.forEach(me => {
-                const opp = room.players.find(p => p.id !== me.id);
-                if (!opp) return;
-                const oppAliveMs = opp.diedAt
-                    ? opp.diedAt - (room.startedAt || opp.diedAt)
-                    : Date.now() - (room.startedAt || Date.now());
-                io.to(me.id).emit('gameEnded', {
-                    winner,
-                    oppFlaps:    opp.flaps    || 0,
-                    oppAliveMs:  oppAliveMs
+            setTimeout(() => {
+                room.players.forEach(me => {
+                    const opp = room.players.find(p => p.id !== me.id);
+                    if (!opp) return;
+                    const oppAliveMs = opp.diedAt
+                        ? opp.diedAt - (room.startedAt || opp.diedAt)
+                        : Date.now() - (room.startedAt || Date.now());
+                    io.to(me.id).emit('gameEnded', {
+                        winner,
+                        oppFlaps:   opp.flaps || 0,
+                        oppAliveMs: oppAliveMs
+                    });
                 });
-            });
-        }, 850);
-    }
-});
-
-/* flap'i de güncelle — flap sayısını say */
-socket.on('flap', code => {
-    const room = rooms[code];
-    if (room) {
-        const p = room.players.find(p => p.id === socket.id);
-        if (p) p.flaps = (p.flaps || 0) + 1;
-    }
-    socket.to(code).emit('opponentFlapped');
-});
-
-/* startGame'e startedAt ekle */
-socket.on('startGame', code => {
-    const room = rooms[code];
-    if (!room || room.host !== socket.id) return;
-    if (room.players.length !== 2) return;
-    if (room.gameStarted) return;
-
-    room.gameOver  = false;
-    room.startedAt = Date.now() + 3000; // geri sayım dahil
-    room.players.forEach(p => {
-        p.score  = 0;
-        p.alive  = true;
-        p.flaps  = 0;
-        p.diedAt = null;
-        p.ready  = false;
+            }, 850);
+        }
     });
-    room.pipeSet = generatePipeSet();
-
-    io.to(code).emit('countdown', { seconds: 3, pipeSet: room.pipeSet });
-    setTimeout(() => { if (rooms[code]) rooms[code].gameStarted = true; }, 3000);
-});
 
     /* ── Tekrar Oyna ── */
     socket.on('readyToRestart', code => {
