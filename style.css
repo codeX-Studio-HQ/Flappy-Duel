@@ -433,32 +433,32 @@ canvas {
 .stat-opp { color: #cc2222; font-weight: 700; }
 
 /* ── About FAB ───────────────────────────────────── */
+/* ── Ortak Sağ Alt Buton Stili (Ses, Titreşim, Hakkında) ── */
+.control-btn,
 .about-fab {
-    position: fixed;
-    bottom: 22px;
-    right: 22px;
-    width: 46px;
-    height: 46px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    background: #1a0a0a;
-    color: #cc2222;
-    border: 2px solid rgba(180,20,20,0.35);
-    font-size: 1.4rem;
-    font-weight: 900;
+    background: rgba(15, 5, 5, 0.8);
+    backdrop-filter: blur(5px);
+    border: 1px solid #a00;
+    color: white;
+    font-size: 1.8rem;
     cursor: pointer;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.5);
-    transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
-    z-index: 200;
+    box-shadow: 0 0 15px rgba(150,0,0,0.3);
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    letter-spacing: 0;
     padding: 0;
+    margin: 0;
+    /* position kaldırıldı, çünkü #bottomRightPanel içinde flex ile hizalanıyor */
 }
+.control-btn:hover,
 .about-fab:hover {
-    transform: scale(1.1);
+    background: rgba(80, 10, 10, 0.9);
+    transform: scale(1.05);
     border-color: #cc2222;
-    box-shadow: 0 6px 24px rgba(180,0,0,0.4);
 }
 .about-fab:active { transform: scale(0.95); }
 
@@ -666,6 +666,83 @@ canvas {
     height: 22px;
     width: auto;
     filter: brightness(0.75);
+}
+
+/* Durum Çubuğu (Sağ Üst) */
+#statusBar {
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    z-index: 100;
+}
+
+.ping-indicator {
+    background: rgba(15, 5, 5, 0.8);
+    backdrop-filter: blur(5px);
+    border: 1px solid #a00;
+    border-radius: 30px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2rem;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(150,0,0,0.3);
+}
+
+#pingIcon {
+    font-size: 1.4rem;
+}
+
+#controlPanel {
+    display: flex;
+    gap: 10px;
+}
+
+#bottomRightPanel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.control-btn {
+    background: rgba(15, 5, 5, 0.8);
+    backdrop-filter: blur(5px);
+    border: 1px solid #a00;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 0 15px rgba(150,0,0,0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.control-btn:hover {
+    background: rgba(80, 10, 10, 0.9);
+    transform: scale(1.05);
+}
+
+/* Mobil uyum */
+@media (max-width: 600px) {
+    .ping-indicator {
+        padding: 5px 10px;
+        font-size: 1rem;
+    }
+    .control-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1.5rem;
+    }
 }
 
 /* ── Utility ─────────────────────────────────────── */
