@@ -13,6 +13,13 @@ const oppScoreEl     = document.getElementById('opponentScore');
 const resultText     = document.getElementById('resultText');
 const resultIcon     = document.getElementById('resultIcon');
 const countdownEl    = document.getElementById('countdownDisplay');
+// Ses ve Titreşim
+let soundEnabled = true;
+let vibrateEnabled = true;
+const soundToggleBtn = document.getElementById('soundToggleBtn');
+const vibrateToggleBtn = document.getElementById('vibrateToggleBtn');
+const pingValueEl = document.getElementById('pingValue');
+const pingIconEl = document.getElementById('pingIcon');
 
 /* İstatistik DOM */
 const statMyPipes  = document.getElementById('statMyPipes');
@@ -145,6 +152,7 @@ function getAC() {
     return audioCtx;
 }
 function playFlap() {
+    if (!soundEnabled) return;
     try {
         const ac = getAC();
         const o = ac.createOscillator(), g = ac.createGain();
@@ -158,6 +166,7 @@ function playFlap() {
     } catch(e) {}
 }
 function playScore() {
+    if (!soundEnabled) return; 
     try {
         const ac = getAC();
         const o = ac.createOscillator(), g = ac.createGain();
@@ -171,6 +180,7 @@ function playScore() {
     } catch(e) {}
 }
 function playDeath() {
+    if (!soundEnabled) return; 
     try {
         const ac = getAC();
         const bufSize = ac.sampleRate * 0.5;
@@ -194,6 +204,7 @@ function playDeath() {
     } catch(e) {}
 }
 function playBeep(loud) {
+    if (!soundEnabled) return; 
     try {
         const ac = getAC();
         const o = ac.createOscillator(), g = ac.createGain();
@@ -410,6 +421,7 @@ function mainLoop() {
 /* ── Ölüm ────────────────────────────────────────── */
 function killMyBird() {
     if (dying) return;
+     if (vibrateEnabled && navigator.vibrate) navigator.vibrate(100);
     gameRunning = false;
     dying       = true;
     dyingTimer  = 0;
@@ -451,14 +463,19 @@ function initCanvas() {
     canvas = document.getElementById('gameCanvas');
     ctx    = canvas.getContext('2d');
     const mid = canvas.height / 2;
-    myBird  = { x: 110, y: mid, vel: -1.0, r: BIRD_R };
-    oppBird = { x: 110, y: mid, vel: -1.0, r: BIRD_R };
+    
+    // ⚠️ velocity'i MUTLAKA 0 veya hafif negatif yap (düşüşü yumuşat)
+    myBird  = { x: 110, y: mid, vel: 0, r: BIRD_R };      // vel: -1.0 yerine 0
+    oppBird = { x: 110, y: mid, vel: 0, r: BIRD_R };      // aynı şekilde
+    
     myAnim  = makeBirdAnim();
     oppAnim = makeBirdAnim();
+    
     particles  = [];
     flashAlpha = 0;
     dying      = false;
     dyingTimer = 0;
+    
     initStars();
 }
 
@@ -469,10 +486,19 @@ function buildPipes(set) {
 }
 
 function startCountdown(seconds, ps) {
+    // === YENİ EKLENECEK ===
+    if (raf) {
+        cancelAnimationFrame(raf);
+        raf = null;
+    }
+    gameRunning = false;   // önceki oyunu kesin durdur
+    // =====================
+    
     pipeSet = ps;
     showOnly('game');
-    initCanvas();
-    pipes    = buildPipes(pipeSet);
+    initCanvas();           // ← içinde velocity'ler 0 olacak
+    pipes = buildPipes(pipeSet);
+    
     myScore  = 0; oppScore  = 0;
     myFlaps  = 0; oppFlaps  = 0;
     myPipes  = 0; oppPipes  = 0;
@@ -496,7 +522,14 @@ function startCountdown(seconds, ps) {
         clearInterval(iv);
         countdownEl.classList.add('hidden');
         gameStartTime = Date.now();
-        gameRunning   = true;
+        
+        // === YENİ EKLENECEK ===
+        // Kuşların başlangıç hızını tekrar sıfırla (güvenlik için)
+        if (myBird)  myBird.vel  = 0;
+        if (oppBird) oppBird.vel = 0;
+        // =====================
+        
+        gameRunning = true;
         raf = requestAnimationFrame(mainLoop);
     }, seconds * 1000);
 }
@@ -659,6 +692,54 @@ document.getElementById('menuBtn').onclick = () => {
     if (roomCode) socket.emit('backToMenu', roomCode);
     else showOnly('menu');
 };
+
+// Ping ölçümü
+let pingStart = 0;
+let currentPing = 0;
+
+const pingInterval = setInterval(() => {
+    if (socket.connected) {
+        pingStart = Date.now();
+        socket.emit('ping');
+    }
+}, 2000);
+
+socket.on('pong', () => {
+    currentPing = Date.now() - pingStart;
+    pingValueEl.textContent = `${currentPing} ms`;
+    
+    // İkon ve renk değişimi
+    if (currentPing < 80) {
+        pingIconEl.textContent = '📶';
+        pingValueEl.style.color = '#0f0';
+    } else if (currentPing < 150) {
+        pingIconEl.textContent = '📶';
+        pingValueEl.style.color = '#ff0';
+    } else {
+        pingIconEl.textContent = '📡';
+        pingValueEl.style.color = '#f00';
+    }
+});
+window.addEventListener('beforeunload', () => clearInterval(pingInterval));
+
+// Ses Aç/Kapat
+soundToggleBtn.onclick = () => {
+    soundEnabled = !soundEnabled;
+    soundToggleBtn.textContent = soundEnabled ? '🔊' : '🔇';
+};
+
+// Titreşim Aç/Kapat
+vibrateToggleBtn.onclick = () => {
+    vibrateEnabled = !vibrateEnabled;
+    vibrateToggleBtn.textContent = vibrateEnabled ? '📳' : '📴';
+    if (!vibrateEnabled && navigator.vibrate) navigator.vibrate(0);
+};
+
+// Bilgisayarda titreşim butonunu gizle
+if (!('vibrate' in navigator) || !/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    const vibBtn = document.getElementById('vibrateToggleBtn');
+    if (vibBtn) vibBtn.style.display = 'none';
+}
 
 /* ══ KONTROLLER ══════════════════════════════════════ */
 window.addEventListener('keydown', e => {
