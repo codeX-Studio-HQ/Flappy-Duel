@@ -62,6 +62,14 @@
             </div>
         </div>
 
+<!-- Kontrol Paneli (Sağ Üst: Ping, Sağ Alt: Ses ve Titreşim) -->
+<div id="statusBar">
+    <div id="pingDisplay" class="ping-indicator">
+        <span id="pingIcon">📶</span>
+        <span id="pingValue">-- ms</span>
+    </div>
+</div>
+
         <!-- Oyun Sonu -->
         <div id="gameOver" class="card hidden">
     <div id="resultIcon" class="result-icon">🏆</div>
@@ -117,7 +125,7 @@
         <!-- Logo + versiyon -->
         <div class="modal-hero">
             <img src="art/Flappy_Duel.png" alt="Flappy Duel" class="modal-logo">
-            <div class="modal-version-badge">v1.0</div>
+            <div class="modal-version-badge">BETA v1.0</div>
         </div>
 
         <div class="modal-divider"></div>
@@ -140,7 +148,7 @@
             </div>
             <div class="modal-row">
                 <span class="modal-row-label">VERSION</span>
-                <span class="modal-row-value">v1.0</span>
+                <span class="modal-row-value">Beta v1.0</span>
             </div>
             <div class="modal-row">
                 <span class="modal-row-label">ENGINE</span>
@@ -159,8 +167,14 @@
     </div>
 </div>
 
-<!-- Hakkında Butonu -->
-<button id="aboutBtn" class="about-fab">?</button>
+<!-- Alt Sağ Panel: Ses, Titreşim ve Hakkında -->
+<div id="bottomRightPanel">
+    <div id="controlPanel">
+        <button id="soundToggleBtn" class="control-btn" title="Ses Aç/Kapat">🔊</button>
+        <button id="vibrateToggleBtn" class="control-btn" title="Titreşim Aç/Kapat">📳</button>
+    </div>
+    <button id="aboutBtn" class="about-fab" title="Hakkında">?</button>
+</div>
 
 
                 </div>
@@ -169,8 +183,7 @@
     </div>
 </div>
 
-<!-- Hakkında Butonu -->
-<button id="aboutBtn" class="about-btn">?</button>
+
 
     </div>
 
